@@ -1,0 +1,24 @@
+?- padre(juan, Quien).
+Quien = luis ;
+Quien = lia.
+
+?- padre(jorge, luis).
+false.
+
+?- padre(maria, jorge).
+false.
+
+?- padre(Hijo, Padre).
+Hijo = juan,
+Padre = luis ;
+Hijo = juan,
+Padre = lia ;
+Hijo = luis,
+Padre = jorge ;
+Hijo = luis,
+Padre = ines ;
+Hijo = jorge,
+Padre = diego.
+
+?- padre(Hijo, juan).
+false.
