@@ -1,0 +1,2 @@
+?- disfruta_compras(Persona).
+Persona = sam.

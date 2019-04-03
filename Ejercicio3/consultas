@@ -1,24 +1,140 @@
-?- padre(juan, Quien).
-Quien = luis ;
-Quien = lia.
+3.1
 
-?- padre(jorge, luis).
+?- padre(Padre, ines).
+Padre = luis.
+
+?- padre(luis, jorge).
+true.
+
+?- padre(jorge, maria).
 false.
 
-?- padre(maria, jorge).
+?- padre(Padre, maria).
 false.
 
-?- padre(Hijo, Padre).
-Hijo = juan,
-Padre = luis ;
-Hijo = juan,
-Padre = lia ;
-Hijo = luis,
-Padre = jorge ;
-Hijo = luis,
-Padre = ines ;
-Hijo = jorge,
-Padre = diego.
+?- padre(Padre, Hije).
+Padre = juan,
+Hije = luis ;
+Padre = juan,
+Hije = lia ;
+Padre = luis,
+Hije = jorge ;
+Padre = luis,
+Hije = ines ;
+Padre = jorge,
+Hije = diego.
 
-?- padre(Hijo, juan).
+?- padre(juan, Hije).
+Hije = luis ;
+Hije = lia.
+
+
+
+3.2
+
+?- abuelo_paterno(Abuelo, diego).
+Abuelo = luis ;
+false.
+
+?- abuelo_paterno(Abuelo, Niete).
+Abuelo = juan,
+Niete = jorge ;
+Abuelo = juan,
+Niete = ines ;
+Abuelo = luis,
+Niete = diego ;
+false.
+
+
+
+3.4
+
+?- abuelo(Abuelo, Niete).
+Abuelo = juan,
+Niete = jorge ;
+Abuelo = juan,
+Niete = ines ;
+Abuelo = luis,
+Niete = diego ;
+Abuelo = juan,
+Niete = maria ;
+Abuelo = juan,
+Niete = rosa ;
+false.
+
+
+
+3.5
+
+?- hermano(A, B).
+A = luis,
+B = lia ;
+A = lia,
+B = luis ;
+A = jorge,
+B = ines ;
+A = ines,
+B = jorge ;
+A = maria,
+B = rosa ;
+A = rosa,
+B = maria ;
+false.
+
+
+
+3.6
+
+tio(T, S).
+T = luis,
+S = maria ;
+T = luis,
+S = rosa ;
+T = lia,
+S = jorge ;
+T = lia,
+S = ines ;
+T = ines,
+S = diego ;
+false.
+
+
+
+3.7
+
+?- ancestro(A, D).
+A = ana,
+D = luis ;
+A = lia,
+D = maria ;
+A = lia,
+D = rosa ;
+A = juan,
+D = luis ;
+A = juan,
+D = lia ;
+A = luis,
+D = jorge ;
+A = luis,
+D = ines ;
+A = jorge,
+D = diego ;
+A = ana,
+D = jorge ;
+A = ana,
+D = ines ;
+A = ana,
+D = diego ;
+A = juan,
+D = jorge ;
+A = juan,
+D = ines ;
+A = juan,
+D = diego ;
+A = juan,
+D = maria ;
+A = juan,
+D = rosa ;
+A = luis,
+D = diego ;
 false.
