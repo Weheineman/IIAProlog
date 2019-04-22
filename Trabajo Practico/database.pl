@@ -3,24 +3,27 @@
             emoji.pro
     emoji identification game.
     start with ?- emojinator.
+         Oriana Reschini
+         Gianni Weinand
     🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍
 */
 
-encoding(utf8).
 
-
+% Funcion principal. En caso de que el emoji buscado no este en la base de
+% datos, se da la opcion de agregarlo. Luego se limpian las relaciones
+% cumple y no_cumple.
 emojinator :- suponer(Emoji),
-          write('El emoji que está buscando es '),
-          write(Emoji),
-          write('!'),
-          (Emoji \== desconocido -> true;
-              nl,
-              write('Quiere agregarlo a la base de datos? [si./no.]'),
-              nl,
-              read(Respuesta),
-              ((Respuesta == si ; Respuesta == s) ->
-                  agregar ; !)),
-          limpiar_base.
+              write('El emoji que está buscando es '),
+              write(Emoji),
+              write('!'),
+              (Emoji \== desconocido -> true;
+                  nl,
+                  write('Quiere agregarlo a la base de datos? [si./no.]'),
+                  nl,
+                  read(Respuesta),
+                  ((Respuesta == si ; Respuesta == s) ->
+                      agregar ; !)),
+              limpiar_base.
 
 % Lista de emojis. 📝
 suponer(😂) :- 😂, !.
@@ -156,9 +159,13 @@ lista_no_cumple(_ListaVieja, []).
 agregar :- write('Ingrese el emoji nuevo: '),
            read(Emoji),
            lista_cumple([], ListaCumple),
+           write("El emoji cumple con: "),
            write(ListaCumple),
+           nl,
            lista_no_cumple([], ListaNoCumple),
+           write("El emoji NO cumple con: "),
            write(ListaNoCumple),
+           nl,
            asserta((Emoji :- verificar_si_lista(ListaCumple),
                              verificar_no_lista(ListaNoCumple))),
            asserta((suponer(Emoji) :- Emoji, !)).
