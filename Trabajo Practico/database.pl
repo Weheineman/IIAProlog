@@ -1,6 +1,6 @@
 /*
     🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍
-             emoji.pro
+            emoji.pro
     emoji identification game.
     start with ?- emojinator.
     🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍🧞‍
@@ -13,15 +13,16 @@ emojinator :- suponer(Emoji),
           write('El emoji que está buscando es '),
           write(Emoji),
           write('!'),
-          nl,
-          write('Quiere agregarlo a la base de datos? [si./no.]'),
-          nl,
-          read(Respuesta),
-          ((Respuesta == si ; Respuesta == s) ->
-              agregar ; !).
-          % limpiar_base.
+          (Emoji \== desconocido -> true;
+              nl,
+              write('Quiere agregarlo a la base de datos? [si./no.]'),
+              nl,
+              read(Respuesta),
+              ((Respuesta == si ; Respuesta == s) ->
+                  agregar ; !)),
+          limpiar_base.
 
-% Lista de emojis 📝
+% Lista de emojis. 📝
 suponer(😂) :- 😂, !.
 suponer(😭) :- 😭, !.
 suponer(😡) :- 😡, !.
@@ -35,10 +36,11 @@ suponer(🍌) :- 🍌, !.
 suponer(🍑) :- 🍑, !.
 suponer(🍎) :- 🍎, !.
 suponer(💦) :- 💦, !.
-suponer(desconocido). % Si ninguno de los emojis conocidos matchea
+suponer(desconocido). % Si ninguno de los emojis conocidos matchea...
                       % 🤔🤔🤔🤔🤔
+:- dynamic suponer/1.
 
-% Reglas de identificacion 🧐
+% Reglas de identificacion. 🧐
 😂 :-   feliz,
         verificar(lagrimas).
 
@@ -65,13 +67,14 @@ suponer(desconocido). % Si ninguno de los emojis conocidos matchea
 🔝 :-   simbolo,
         verificar(azul).
 
-🍆 :-   fruta_verdura.
+🍆 :-   fruta_verdura,
+        verificar(violeta).
 
 🍌 :-   fruta_verdura,
         verificar(amarillo).
 
 🍑 :-   fruta_verdura,
-        verificar(ocote).
+        verificar(carozo).
 
 🍎 :-   fruta_verdura,
         verificar(tiene_rojo).
@@ -81,10 +84,10 @@ suponer(desconocido). % Si ninguno de los emojis conocidos matchea
 
 
 
-% Clasificacion de Emojis 🔬
+% Clasificacion de Emojis. 🔬
 smiley   :- verificar(redondo),
-            verificar(tiene_ojos), !.
-smiley   :- verificar(expresa_emocion).
+            verificar(tiene_ojos),
+            verificar(expresa_emocion).
 feliz    :- smiley,
             verificar(contento).
 fruta_verdura :-
@@ -97,7 +100,6 @@ simbolo  :- verificar(numeros).
 % I/O para obtener informacion. En particular las preguntas son si el
 % emoji buscado cumple cierta caracteristica. La respuesta se guarda en la
 % base de conocimiento. 💾💾💾💾
-
 preguntar(Propiedad) :-
     write('El emoji cumple con la siguiente propiedad: '),
     write(Propiedad),
@@ -112,20 +114,27 @@ preguntar(Propiedad) :-
 
 % Verificacion de propiedades.☑️ ☑️  En caso de no estar en la base de
 % conocimiento, realiza una pregunta al usuario.❓❓❓
-% Si recibe una lista, lo hace en el orden en el que recibe las propiedades
-% hasta que alguna falle.
-verificar_lista([]).
-
-verificar_lista([H|T])  :-
-    verificar(H),
-    verificar_lista(T).
-
 verificar(Propiedad)    :-
     (cumple(Propiedad)    -> true ;
     (no_cumple(Propiedad) -> fail ;
-     preguntar(Propiedad))).
+    preguntar(Propiedad))).
 
-% Genera una lista con todas las propiedades cumplidas 👶✔️📝
+% Verifica que se cumplan todas las propiedades de una lista. ✔️📝
+verificar_si_lista([]).
+
+verificar_si_lista([H|T])  :-
+    verificar(H),
+    verificar_si_lista(T).
+
+% Verifica que NO se cumpla ninguna de las propiedades de la lista. ❌📝
+verificar_no_lista([]).
+
+verificar_no_lista([H|T])  :-
+    not(verificar(H)),
+    verificar_no_lista(T).
+
+
+% Genera una lista con todas las propiedades cumplidas. 👶✔️📝
 lista_cumple(ListaVieja, [H|T]) :-
     cumple(H),
     not(member(H, ListaVieja)),
@@ -133,11 +142,13 @@ lista_cumple(ListaVieja, [H|T]) :-
 
 lista_cumple(_ListaVieja, []).
 
-% Recibe una lista y aplica la funcion not() a cada elemento. ❌📝
-negar_lista([], []).
-negar_lista([H_1|T_1], [H_2|T_2]):-
-    H_2 = not(H_1),
-    negar_lista(T_1, T_2).
+% Genera una lista con todas las propiedades NO cumplidas. 👶❌📝
+lista_no_cumple(ListaVieja, [H|T]) :-
+    no_cumple(H),
+    not(member(H, ListaVieja)),
+    lista_no_cumple([H|ListaVieja], T).
+
+lista_no_cumple(_ListaVieja, []).
 
 % Agrega el emoji ingresado por teclado a la base de conocimiento, con las
 % propiedades especificadas en las preguntas (ocurre solo cuando no se
@@ -145,12 +156,14 @@ negar_lista([H_1|T_1], [H_2|T_2]):-
 agregar :- write('Ingrese el emoji nuevo: '),
            read(Emoji),
            lista_cumple([], ListaCumple),
-           asserta(Emoji :- verificar(ListaCumple)).
+           write(ListaCumple),
+           lista_no_cumple([], ListaNoCumple),
+           write(ListaNoCumple),
+           asserta((Emoji :- verificar_si_lista(ListaCumple),
+                             verificar_no_lista(ListaNoCumple))),
+           asserta((suponer(Emoji) :- Emoji, !)).
 
-
-
-
-% Elimina de la base de conocimiento la informacion obtenida en las consultas
+% Elimina de la base de conocimiento la informacion obtenida en las consultas.
 % 🗑️🗑️🗑️
 limpiar_base :- retract(cumple(_)), fail.
 limpiar_base :- retract(no_cumple(_)), fail.
